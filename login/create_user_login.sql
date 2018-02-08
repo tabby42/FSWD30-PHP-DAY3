@@ -1,0 +1,17 @@
+DROP DATABASE IF EXISTS user_login;
+
+CREATE DATABASE IF NOT EXISTS user_login DEFAULT CHARACTER SET utf8;
+
+USE user_login;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    pwd VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO users (username, pwd, email) VALUES ('tabby42', '1234', 'test@gmx.at');
+
+
