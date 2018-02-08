@@ -6,7 +6,16 @@ Class User {
 	public $username;
 	public $email;
 	public $password;
-	public $createdAt;
+	public $firstname;
+	public $lastname;
+	public $phoneCountryCode;
+	public $phoneNr;
+	public $street;
+	public $streetNr;
+	public $zipcode;
+	public $city;
+	public $country;
+	public $driversLicenseNr;
 
 	function __construct() {
         
@@ -29,7 +38,7 @@ Class User {
 		    die("ERROR: Could not connect. " . $mysqli->connect_error);
 		}
 		// Prepare a select statement
-        $sql = "SELECT id FROM users WHERE username = ?";
+        $sql = "SELECT id FROM user WHERE username = ?";
         
         if($stmt = $connection->prepare($sql)){
             // Bind variables to the prepared statement as parameters
@@ -78,7 +87,7 @@ Class User {
 		    die("ERROR: Could not connect. " . $mysqli->connect_error);
 		}
 		 //statement
-		 $sql = "INSERT INTO users (username, pwd, email) VALUES (?, ?, ?)";
+		 $sql = "INSERT INTO user (username, pwd, email) VALUES (?, ?, ?)";
 		 //prepare statement
 		 if($stmt = $connection->prepare($sql)){
             // Bind variables to the prepared statement as parameters
@@ -110,7 +119,7 @@ Class User {
 		    die("ERROR: Could not connect. " . $mysqli->connect_error);
 		}
 		 //statement
-		$sql = "SELECT username, pwd FROM users WHERE username = ?";
+		$sql = "SELECT username, pwd FROM user WHERE username = ?";
 
 		if($stmt = $connection->prepare($sql)){
             // Bind variables to the prepared statement as parameters
@@ -126,9 +135,8 @@ Class User {
                 	// Bind result variables
                     $stmt->bind_result($username, $hashed_password);
                     if($stmt->fetch()){
+                    	//compare passwords
                     	if(password_verify($this->password, $hashed_password)){
-                            /* Password is correct, so start a new session and
-                            save the username to the session */
             				$stmt->close();
         					$connection->close();
                             return true;
@@ -145,6 +153,60 @@ Class User {
                 }
             } 
         }
+	}
+
+	static function getUserInfo ($username){
+		$connection = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+		$connection->set_charset("utf8mb4");
+		// Check connection
+		if($connection === false){
+		    die("ERROR: Could not connect. " . $mysqli->connect_error);
+		}
+		 //statement
+		$sql = "SELECT * FROM userInfo WHERE username = ?";
+		if($stmt = $connection->prepare($sql)){
+            // Bind variables to the prepared statement as parameters
+            $stmt->bind_param("s", $param_username);
+            // Set parameters
+            $param_username = $username;
+            // Attempt to execute the prepared statement
+            if($stmt->execute()){
+                /// Store result
+                $stmt->store_result();
+                // Check if username exists, if yes then verify password
+                if($stmt->num_rows == 1){ 
+                	// Bind result variables
+                    $stmt->bind_result($retid, $retusername, $retemail, $retfirstname,
+                    	$retlastname, $retphoneCountryCode, $retPhoneNr, $retStreet,
+                    	$retStreetNr, $retZipcode, $retCity, $retCountry, $retDriversLicense);
+                    if($stmt->fetch()){
+                    	$inst = new self();
+                    	$inst->id = $retid;
+                    	$inst->username = $retusername;
+                    	$inst->email = $retemail;
+                    	$inst->firstname = $retfirstname;
+                    	$inst->lastname = $retlastname;
+                    	$inst->phoneCountryCode = $retphoneCountryCode;
+                    	$inst->phoneNr = $retPhoneNr;
+                    	$inst->street = $retStreet;
+                    	$inst->streetNr = $retStreetNr;
+                    	$inst->zipcode = $retZipcode;
+                    	$inst->city = $retCity;
+                    	$inst->country = $retCountry;
+                    	$inst->driversLicenseNr = $retDriversLicense;
+                    	return $inst;
+         //            	 while ($stmt->fetch()) {
+					    //     printf ("%s (%s)\n", $name, $code);
+					    // }
+                    }
+                } else {
+            		$stmt->close();
+        			$connection->close();
+                	return false;
+                }
+            } 
+        }
+
 	}
 
 }
