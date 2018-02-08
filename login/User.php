@@ -209,6 +209,35 @@ Class User {
 
 	}
 
+	function updateUserInfo() {
+		echo "function called";
+		$connection = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+		$connection->set_charset("utf8mb4");
+		// Check connection
+		if($connection === false){
+		    die("ERROR: Could not connect. " . $mysqli->connect_error);
+		}
+		 //statement
+		 $sql = "UPDATE user SET email = ? WHERE username = ?";
+		 if($stmt = $connection->prepare($sql)){
+            // Bind variables to the prepared statement as parameters
+            $stmt->bind_param("ss", $param_email, $param_username);
+            // Set parameters
+            $param_email = $this->email;
+            $param_username = $this->username;
+            // Attempt to execute the prepared statement
+            if($stmt->execute()){
+                //echo "Executed";
+            } else{
+                echo "Something went wrong. Please try again later.";
+            } 
+        } else {
+        	echo "Something went wrong. Please try again later.";
+        }
+    	$stmt->close();
+        $connection->close();
+	}
+
 }
 
 
