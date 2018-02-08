@@ -24,6 +24,8 @@
 	    	if (!$user->checkCredentials()) {
 	    		$login_err = "Access denied.";
 	    	} else {
+	    		/* Password is correct, so start a new session and
+                save the username to the session */
 	    		$login_err = "";
 	    		session_start();
                 $_SESSION['username'] = $user->username;      

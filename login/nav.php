@@ -9,7 +9,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="welcome.php">
-        <span>Logo</span>
+        <span><i class="fa fa-car"></i>Car Rental</span>
       </a>
       <a class="navbar-brand" href="account.php">
         <span>
